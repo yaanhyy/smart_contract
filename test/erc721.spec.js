@@ -12,11 +12,11 @@ contract('Testing ERC721 contract', function(accounts) {
     const symbol = "BCat"
 
     const account1 = accounts[1]
-    const tokenId1 = 1111;
+    const tokenId1 = 9999;
   //  const tokenUri1 = "This is data for the token 1"; // Does not have to be unique
 
     const account2 = accounts[2]
-    const tokenId2 = 2222;
+    const tokenId2 = 8888;
    // const tokenUri2 = "This is data for the token 2"; // Does not have to be unique
 
     const account3 = accounts[3]
@@ -43,24 +43,24 @@ contract('Testing ERC721 contract', function(accounts) {
 
         expect(await token.exists(tokenId1)).to.be.true
         expect(await token.exists(tokenId2)).to.be.true
-        expect(await token.exists(9999)).to.be.false // Dummy tokenId
+        expect(await token.exists(1111)).to.be.false // Dummy tokenId
 
         expect(await token.ownerOf(tokenId1)).to.equal(account1)
         expect(await token.ownerOf(tokenId2)).to.equal(account2)
     })
 
     it(' should allow safe transfers', async () => {
-        const unownedTokenId = token.safeTransferFrom(account2, account3, tokenId1)//, {from: accounts[2],gas:5000000000}) // tokenId
+        const unownedTokenId = token.safeTransferFrom(account2, account3, tokenId1,{from: accounts[2]}) // tokenId
         expect(unownedTokenId).to.be.rejectedWith(/VM Exception while processing transaction: revert/)
 
-        const wrongOwner = token.safeTransferFrom(account1, account3, tokenId2)//, {from: accounts[1], gas:5000000000}) // wrong owner
+        const wrongOwner = token.safeTransferFrom(account1, account3, tokenId2, {from: accounts[1]}) // wrong owner
         expect(wrongOwner).to.be.rejectedWith(/VM Exception while processing transaction: revert/)
 
         // Noticed that the from gas param needs to be the token owners or it fails
-        const wrongFromGas = token.safeTransferFrom(account2, account3, tokenId2)// , {from: accounts[1]}, gas:5000000000}) // wrong owner
+        const wrongFromGas = token.safeTransferFrom(account2, account3, tokenId2, {from: accounts[1]}) // wrong owner
         expect(wrongFromGas).to.be.rejectedWith(/VM Exception while processing transaction: revert/)
 
-        await token.safeTransferFrom(account2, account3, tokenId2) //, {from: accounts[2],gas:5000000000})
+        await token.safeTransferFrom(account2, account3, tokenId2, {from: accounts[2]})
         expect(await token.ownerOf(tokenId2)).to.equal(account3)
     })
 })
